@@ -5,6 +5,10 @@ import requests
 from dotenv import load_dotenv
 import os
 
+# we are brave, we care about errors only 
+import warnings
+warnings.simplefilter("ignore", DeprecationWarning)
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -86,7 +90,6 @@ class ClothingSuggestionTool(BaseTool):
             return f"Failed to provide clothing suggestion: {str(e)}"
 
 
-
 # Instantiate tools
 weather_tool = WeatherTool()
 clothing_tool = ClothingSuggestionTool()
@@ -96,9 +99,9 @@ tools = [weather_tool, clothing_tool]
 llm = ChatOpenAI(api_key=openai_api_key, temperature=0)  # Pass the API key from env variables
 
 # Create the agent
-agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
+agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION)
 
 # Run the agent with the input
 place = input("Where are you travelling?\n")
-response = agent.run(f"What's the weather in {place}? Suggest what to wear.")
+response = agent.invoke(f"What's the weather in {place}? Suggest what to wear.")
 print(response)

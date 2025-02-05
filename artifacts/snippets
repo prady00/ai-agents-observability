@@ -1,0 +1,53 @@
+Verbose - 
+=========================================
+
+agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
+
+
+Callbacks - 
+=========================================
+
+
+from langchain.callbacks.manager import CallbackManager
+
+
+# Attach the Callback Handler
+from MyCustomCallbackHandler import MyCustomCallbackHandler
+
+callback_manager = CallbackManager([MyCustomCallbackHandler()])
+
+llm = ChatOpenAI(api_key=openai_api_key, temperature=0,callback_manager=callback_manager)
+
+# Pass it to the agent
+agent = initialize_agent(
+    tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+    callback_manager=callback_manager,
+    verbose=True  # Keep verbose logging enabled too
+)
+
+
+LangSmith-
+========================================
+
+pip install langsmith
+
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
+
+from langchain.callbacks import LangChainTracer
+from langchain.callbacks.manager import CallbackManager
+
+# Initialize LangSmith Tracer
+tracer = LangChainTracer()
+
+# Use callback manager
+callback_manager = CallbackManager([tracer])
+
+# Create the agent with LangSmith enabled
+agent = initialize_agent(
+    tools,
+    llm,
+    agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+    callback_manager=callback_manager,
+    verbose=True
+)
